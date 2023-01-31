@@ -4,7 +4,7 @@ A Cache Mechanism with several Features.
 
 ## Description
 
-The Cache Stores Information about the N most active Records, where 'N' is a 
+The Cache stores Information about the N most active Records, where 'N' is a 
 variable Number of Records which depends on several Factors. New Records are 
 placed at the Top of the Cache, old Records are removed from the Bottom of the 
 Cache, but not always. This reminds the LRU Cache but has more Features.
@@ -62,7 +62,7 @@ Cache. If a new Record has a unique unregistered ID, it is added to the Top.
 Old Records are removed either from the Bottom of the Cache after the Insertion 
 of a new Record, or when the requested Record is found to be expired or "stale".
 
-The Removals are done in this "Lazy" Style to save CPU Time. We check TTL only 
+The Removals are done in this "lazy" Style to save CPU Time. We check TTL only 
 when it is necessary.
 
 ### Record Structure
@@ -71,7 +71,7 @@ Each Record has an 'UID' Field and a 'Data' Field. 'UID' is used for reading
 and indexing Records. 'Data' is used to store some useful Information. 
 
 Both Fields may have Dynamic types, called Generic Types in Go programming 
-Language.  More Information may be found in the Source Code.
+Language. More Information may be found in the Source Code.
 
 ### Requesting a Record
 
