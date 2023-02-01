@@ -90,9 +90,17 @@ will be updated.
 
 ![Golang Logotype](img/golang-gopher-logotype.png)
 
-Some additional Features may be added to the Cache in the Future, such as a 
-Protection against Overheating, when same Records are moved to the Top Position 
-too many Times in the same Second creating a useless load on the CPU.
+## Performance
+
+The first Idea was to limit the Process of LAT Updates in Order to reduce the 
+CPU Usage, so that "hot" Records which had previous LAT Updates less than a 
+Second ago, would not get a new LAT Update. However, the Stress Tests show that 
+Performance is great even without such Limitations.
+
+Stress Tests on quite a decent Hardware show RPS Rate of about 24 to 25 
+Millions of Requests per Second in the most heavy Test (1000 Records, each 
+having 1MB of Data). This means that no Overheating Protection is required. 
+Probably, this Cache will not ever be a Bottleneck.
 
 ## Importing
 
