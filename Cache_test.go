@@ -1,4 +1,4 @@
-package Cache
+package cache
 
 import (
 	"sync"

@@ -1,4 +1,4 @@
-package Cache
+package cache
 
 import "github.com/vault-thirteen/tester"
 

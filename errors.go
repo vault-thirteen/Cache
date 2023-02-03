@@ -1,4 +1,4 @@
-package Cache
+package cache
 
 const (
 	ErrBottomRecordDoesNotExist = "bottom record does not exist"

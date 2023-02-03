@@ -1,4 +1,4 @@
-package Cache
+package cache
 
 type DataType interface {
 	string | []byte
