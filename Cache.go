@@ -191,6 +191,22 @@ func (c *Cache[U, D]) GetRecord(uid U) (data D, err error) {
 	return rec.data, nil
 }
 
+func (c *Cache[U, D]) RemoveRecord(uid U) (err error) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
+	var rec *Record[U, D]
+	var recExists bool
+	rec, recExists = c.recordsByUid[uid]
+	if !recExists {
+		return fmt.Errorf(ErrRecordIsNotFound, uid)
+	}
+
+	rec.unlink()
+
+	return nil
+}
+
 func (c *Cache[U, D]) Clear() (err error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
