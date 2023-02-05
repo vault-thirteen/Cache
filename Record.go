@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Record is record. Nothing more, nothing less.
 type Record[U UidType, D DataType] struct {
 	uid            U
 	data           D
@@ -15,6 +16,7 @@ type Record[U UidType, D DataType] struct {
 	lowerRecord    *Record[U, D]
 }
 
+// NewRecord creates a new cache record.
 func NewRecord[U UidType, D DataType](cache *Cache[U, D], uid U, data D) (rec *Record[U, D], err error) {
 	err = checkUid(uid)
 	if err != nil {

@@ -348,19 +348,22 @@ func Test_RemoveRecord(t *testing.T) {
 	var c *Cache[string, string]
 	var ok bool
 	var err error
+	var recExists bool
 
 	c = _test_prepare_ABC_cache(aTest) // ABC.
 
 	// Test #1. Non-existent record.
-	err = c.RemoveRecord("Junk") // ABC -> ABC.
+	recExists, err = c.RemoveRecord("Junk") // ABC -> ABC.
 	aTest.MustBeAnError(err)
 	aTest.MustBeEqual(err.Error(), `record is not found, uid=Junk`)
+	aTest.MustBeEqual(recExists, false)
 	ok = _test_ensure_order_3_records(c, [3]string{"A", "B", "C"}, [3]string{"1", "2", "3"})
 	aTest.MustBeEqual(ok, true)
 
 	// Test #2. Existing record.
-	err = c.RemoveRecord("B") // ABC -> AC.
+	recExists, err = c.RemoveRecord("B") // ABC -> AC.
 	aTest.MustBeNoError(err)
+	aTest.MustBeEqual(recExists, true)
 	ok = _test_ensure_order_2_records(c, [2]string{"A", "C"}, [2]string{"1", "3"})
 	aTest.MustBeEqual(ok, true)
 }

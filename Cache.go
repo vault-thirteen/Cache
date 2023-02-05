@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// Cache is cache. Surprisingly, but it is true.
 type Cache[U UidType, D DataType] struct {
 	top          *Record[U, D]
 	bottom       *Record[U, D]
@@ -18,6 +19,7 @@ type Cache[U UidType, D DataType] struct {
 	lock         *sync.RWMutex
 }
 
+// NewCache creates a new cache.
 func NewCache[U UidType, D DataType](
 	sizeLimit int,
 	volumeLimit int,
@@ -106,6 +108,7 @@ func (c *Cache[U, D]) getFreeVolume() int {
 	return c.volumeLimit - c.volume
 }
 
+// GetVolume returns current volume of the cache.
 func (c *Cache[U, D]) GetVolume() (usedVolume int, volumeLimit int) {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
@@ -113,6 +116,9 @@ func (c *Cache[U, D]) GetVolume() (usedVolume int, volumeLimit int) {
 	return c.volume, c.volumeLimit
 }
 
+// AddRecord either adds a new record to the top of the cache or moves an
+// existing record to the top of the cache. If the record already exists, its
+// data and LAT are updated.
 func (c *Cache[U, D]) AddRecord(uid U, data D) (err error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
@@ -169,6 +175,8 @@ func (c *Cache[U, D]) AddRecord(uid U, data D) (err error) {
 	return nil
 }
 
+// GetRecord reads a record from the cache. If the record is outdated, it is
+// removed from the cache and is not returned.
 func (c *Cache[U, D]) GetRecord(uid U) (data D, err error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
@@ -191,22 +199,23 @@ func (c *Cache[U, D]) GetRecord(uid U) (data D, err error) {
 	return rec.data, nil
 }
 
-func (c *Cache[U, D]) RemoveRecord(uid U) (err error) {
+// RemoveRecord removes a record from the cache.
+func (c *Cache[U, D]) RemoveRecord(uid U) (recExists bool, err error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
 	var rec *Record[U, D]
-	var recExists bool
 	rec, recExists = c.recordsByUid[uid]
 	if !recExists {
-		return fmt.Errorf(ErrRecordIsNotFound, uid)
+		return recExists, fmt.Errorf(ErrRecordIsNotFound, uid)
 	}
 
 	rec.unlink()
 
-	return nil
+	return recExists, nil
 }
 
+// Clear removes all records from the cache.
 func (c *Cache[U, D]) Clear() (err error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
