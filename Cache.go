@@ -116,6 +116,15 @@ func (c *Cache[U, D]) GetVolume() (usedVolume int, volumeLimit int) {
 	return c.volume, c.volumeLimit
 }
 
+// RecordExists checks whether the specified record exists or not.
+func (c *Cache[U, D]) RecordExists(uid U) (recordExists bool) {
+	c.lock.RLock()
+	defer c.lock.RUnlock()
+
+	_, recordExists = c.recordsByUid[uid]
+	return recordExists
+}
+
 // AddRecord either adds a new record to the top of the cache or moves an
 // existing record to the top of the cache. If the record already exists, its
 // data and LAT are updated.

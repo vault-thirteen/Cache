@@ -185,6 +185,27 @@ func Test_GetVolume(t *testing.T) {
 	aTest.MustBeEqual(volumeLimit, 10)
 }
 
+func Test_RecordExists(t *testing.T) {
+	aTest := tester.New(t)
+	var c *Cache[string, string]
+	var recExists bool
+	var ok bool
+
+	c = _test_prepare_ABC_cache_with_low_ttl(aTest) // ABC.
+
+	// Test #1. Record is not found.
+	recExists = c.RecordExists("Junk")
+	aTest.MustBeEqual(recExists, false)
+	ok = _test_ensure_order_3_records(c, [3]string{"A", "B", "C"}, [3]string{"1", "2", "3"})
+	aTest.MustBeEqual(ok, true)
+
+	// Test #2. Record is found.
+	recExists = c.RecordExists("B")
+	aTest.MustBeEqual(recExists, true)
+	ok = _test_ensure_order_3_records(c, [3]string{"A", "B", "C"}, [3]string{"1", "2", "3"})
+	aTest.MustBeEqual(ok, true)
+}
+
 func Test_AddRecord(t *testing.T) {
 	aTest := tester.New(t)
 	var c *Cache[string, string]
