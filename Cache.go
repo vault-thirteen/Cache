@@ -242,3 +242,8 @@ func (c *Cache[U, D]) Clear() (err error) {
 
 	return nil
 }
+
+// LibVersion returns the version of this library.
+func (c *Cache[U, D]) LibVersion() (ver string) {
+	return LibVersion
+}
