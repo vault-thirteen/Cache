@@ -421,11 +421,3 @@ func Test_Clear(t *testing.T) {
 	ok = _test_ensure_order_0_records(c)
 	aTest.MustBeEqual(ok, true)
 }
-
-func Test_LibVersion(t *testing.T) {
-	aTest := tester.New(t)
-	var c *Cache[string, string]
-
-	// Test.
-	aTest.MustBeEqual(c.LibVersion(), LibVersion)
-}
