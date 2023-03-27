@@ -2,7 +2,7 @@ module github.com/vault-thirteen/Cache
 
 go 1.19
 
-require github.com/vault-thirteen/tester v1.0.1
+require github.com/vault-thirteen/tester v1.1.0
 
 require (
 	github.com/kr/pretty v0.3.1 // indirect
