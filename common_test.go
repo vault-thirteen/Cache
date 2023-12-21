@@ -1,6 +1,6 @@
 package cache
 
-import "github.com/vault-thirteen/tester"
+import "github.com/vault-thirteen/auxie/tester"
 
 func _test_ensure_order_3_records[U UidType](
 	cache *Cache[U, string],

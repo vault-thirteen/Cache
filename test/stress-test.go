@@ -16,7 +16,7 @@ func main() {
 	time.Sleep(time.Second)
 	test_4()
 
-	fmt.Println("Press 'Enter' to quit")
+	fmt.Println("Press 'Enter' to quit.")
 	_, _ = fmt.Scanln()
 }
 

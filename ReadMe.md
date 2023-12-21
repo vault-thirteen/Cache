@@ -1,106 +1,107 @@
 # Cache
 
-A Cache Mechanism with several Features.
+A cache mechanism with several features.
 
 ## Description
 
-The Cache stores Information about the N most active Records, where 'N' is a 
-variable Number of Records which depends on several Factors. New Records are 
-placed at the Top of the Cache, old Records are removed from the Bottom of the 
-Cache, but not always. This reminds the LRU Cache but has more Features.
+The cache stores information about the N most active records, where 'N' is a 
+variable number of records which depends on several factors. New records are 
+placed at the top of the cache, old records are removed from the bottom of the 
+cache, but not always. This reminds the _LRU_ cache but has more features.
 
 ### TTL
 
-Each Record has an Expiration Period, a Time to Live (TTL). If the requested 
-Record is expired, it is removed from the Cache; if the Record is alive (i.e. 
-not expired) when it is requested, it is then moved to the Top Position of the 
-Cache. 
+Each record has an expiration period, a Time to Live (TTL). If the requested 
+record is expired, it is removed from the cache; if the record is alive (i.e. 
+not expired) when it is requested, it is then moved to the top position of the 
+cache. 
 
 ### Volume
-Each Record also has a Volume. Volume is a Size of its Contents (Data) measured 
-in Bytes. 
+
+Each record also has a volume. Volume is a size of its contents (data) measured 
+in bytes. 
 
 ### Size
 
-And, of course, the Size of each Record is One, just like One Piece of 
-Something. Here we do not use "weighted" Records.
+And, of course, the size of each record is one, just like one piece of 
+something. Here we do not use "weighted" records.
 
 ### Limits
 
-The Cache has an ability to limit Records not only by their TTL, but also by 
-the total Size of the Cache and total Volume of all the Records in the Cache.
+The cache has an ability to limit records not only by their TTL, but also by 
+the total size of the cache and total volume of all the records in the cache.
 
-While the TTL Limiter is always enabled, two other Limiters are optional and 
-may be enabled or disabled in various Combinations. E.g., it is possible to 
-limit both Size and Volume of the Cache. This makes the Cache a bit similar to 
-a classical LRU Cache, but provides more Features and Flexibility. But do not 
-be fooled by the Freedom of Choice, disabling both Size and Volume will make 
-the Memory Usage uncontrollable.
+While the TTL limiter is always enabled, two other limiters are optional and 
+may be enabled or disabled in various combinations. E.g., it is possible to 
+limit both size and volume of the cache. This makes the cache a bit similar to 
+a classical _LRU_ cache, but provides more features and flexibility. But do not 
+be fooled by the freedom of choice, disabling both size and volume will make 
+the memory usage uncontrollable.
 
-To enable a Limiter, set its Value above Zero, and vice versa, to disable a 
-Limiter, set its Value to Zero.
+To enable a limiter, set its value above zero, and vice versa, to disable a 
+limiter, set its value to zero.
 
-It is strongly advised to use this Cache for large Numbers of small Records 
-instead of a small Number of gigantic Records while the latter may provoke OOM 
-Exceptions. This Library guarantees to limit only the final Size of the Cache.
-During the Process of Addition of new Records Memory Usage may increase above 
-the Limits set in the Cache's Settings. 
+It is strongly advised to use this cache for large numbers of small records 
+instead of a small number of large records while the latter may provoke OOM 
+exceptions. This library guarantees to limit only the final size of the cache.
+During the process of addition of new records memory usage may increase above 
+the limits set in the cache's settings. 
 
-And for God's Sake, do not set the TTL Limiter to Zero as it will totally 
-disable the Cache. Zero TTL may only be used if you want to use the Cache as a 
-Table storing Records' LATs, but for such Purposes it is weird.
+And for God's sake, do not set the TTL limiter to zero as it will totally 
+disable the cache. Zero TTL may only be used if you want to use the cache as a 
+table storing records' LATs, but for such purposes it is weird.
 
 ### New Records
 
-When a new Record is added into the Cache, if an "incoming" Record already 
-exists in the Cache, i.e. its unique ID, UID, is already registered in the 
-Cache, the Record is moved from its old Position in the Cache to the Top of the 
-Cache. If a new Record has a unique unregistered ID, it is added to the Top.
+When a new record is added into the cache, if an "incoming" record already 
+exists in the cache, i.e. its unique ID, UID, is already registered in the 
+cache, the record is moved from its old position in the cache to the top of the 
+cache. If a new record has a unique unregistered ID, it is added to the top.
 
 ### Old Records
 
-Old Records are removed either from the Bottom of the Cache after the Insertion 
-of a new Record, or when the requested Record is found to be expired or "stale".
+Old records are removed either from the bottom of the cache after the insertion 
+of a new record, or when the requested record is found to be expired or "stale".
 
-The Removals are done in this "lazy" Style to save CPU Time. We check TTL only 
+The removals are done in this "lazy" style to save CPU time. We check TTL only 
 when it is necessary.
 
 ### Record Structure
 
-Each Record has an 'UID' Field and a 'Data' Field. 'UID' is used for reading
-and indexing Records. 'Data' is used to store some useful Information. 
+Each record has an 'UID' field and a 'Data' field. 'UID' is used for reading
+and indexing records. 'Data' is used to store some useful information. 
 
-Both Fields may have Dynamic types, called Generic Types in Go programming 
-Language. More Information may be found in the Source Code.
+Both fields may have dynamic types, called _Generic Types_ in _Go_ programming 
+language. More information can be found in the source code.
 
 ### Requesting a Record
 
-When a User requests a Record (by its UID) from the Cache, we first, check its 
-Existence in the Cache's List, and then we check the Record's TTL (Time To 
-Live). If the requested Record exists but is outdated, it is not returned to 
-the User.
+When a user requests a record (by its UID) from the cache, we first, check its 
+existence in the cache's list, and then we check the record's TTL (Time To 
+Live). If the requested record exists but is outdated, it is not returned to 
+the user.
 
 ## Additional Notes
 
-Due to some white Spaces in the modern State of the Go programming Language 
-(Version 1.19), Generics (generic Types) are limited in their Usage, so that 
-some Parts of the Code such as UID and Data Checks are not fully implemented at 
-this Moment. When the Developers of Go Language fix their "bugs", this Library 
+Due to some white spaces in the modern state of the _Go_ programming language 
+(Version 1.19), _Generics_ (generic Types) are limited in their usage, so that 
+some parts of the code such as UID and data checks are not fully implemented at 
+this moment. When the developers of _Go_ language fix their "bugs", this library 
 will be updated.
 
 ![Golang Logotype](img/golang-gopher-logotype.png)
 
 ## Performance
 
-The first Idea was to limit the Process of LAT Updates in Order to reduce the 
-CPU Usage, so that "hot" Records which had previous LAT Updates less than a 
-Second ago, would not get a new LAT Update. However, the Stress Tests show that 
-Performance is great even without such Limitations.
+The first idea was to limit the process of LAT updates in order to reduce the 
+CPU usage, so that "hot" records which had previous LAT updates less than a 
+second ago, would not get a new LAT update. However, the stress tests show that 
+performance is great even without such limitations.
 
-Stress Tests on quite a decent Hardware show RPS Rate of about 24 to 25 
-Millions of Requests per Second in the most heavy Test (1000 Records, each 
-having 1MB of Data). This means that no Overheating Protection is required. 
-Probably, this Cache will not ever be a Bottleneck.
+Stress tests on quite a decent hardware show RPS rate of about 24 to 25 
+million requests per second in the most heavy test (1000 records, each 
+having 1MB of data). This means that no overheating protection is required. 
+Probably, this cache will not ever be a bottleneck.
 
 ## Importing
 
