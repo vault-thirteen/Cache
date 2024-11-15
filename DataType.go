@@ -1,5 +1,5 @@
 package cache
 
 type DataType interface {
-	string | []byte | any
+	string | []byte
 }

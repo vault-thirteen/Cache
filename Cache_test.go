@@ -226,8 +226,7 @@ func Test_AddRecord(t *testing.T) {
 	// Preparation for Test #1.
 	c = _test_prepare_AB_cache(aTest) // AB.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
+	aTest.MustBeEqual(c.volume, 2)
 	oldLatOfRecordB = c.recordsByUid["B"].lastAccessTime
 
 	// Test #1. Record already exists.
@@ -238,33 +237,29 @@ func Test_AddRecord(t *testing.T) {
 	aTest.MustBeEqual(ok, true)
 	// Also check new values of size, volume and record's TTL.
 	aTest.MustBeEqual(c.size, 2)
-	aTest.MustBeEqual(c.volume, (4+4)+(4+1))
-	//aTest.MustBeEqual(c.volume, 1+4)
+	aTest.MustBeEqual(c.volume, 1+4)
 	newLatOfRecordB = c.recordsByUid["B"].lastAccessTime
 	aTest.MustBeEqual(newLatOfRecordB-oldLatOfRecordB > 0, true)
 
 	// Preparation for Test #2.
 	c = _test_prepare_AB_cache(aTest) // AB.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
+	aTest.MustBeEqual(c.volume, 2)
 
-	//// Test #2. Record is new. Records is bad.
-	//err = c.AddRecord("Q", "") // AB -> AB.
-	//aTest.MustBeAnError(err)
-	//aTest.MustBeEqual(err.Error(), ErrDataIsEmpty)
-	//ok = _test_ensure_order_2_records(c, [2]string{"A", "B"}, [2]string{"1", "2"})
-	//aTest.MustBeEqual(ok, true)
-	//// Also check new values of size, volume and record's TTL.
-	//aTest.MustBeEqual(c.size, 2)
-	////aTest.MustBeEqual(c.volume, 2)
-	//aTest.MustBeEqual(c.volume, (4+1)+(4+1))
+	// Test #2. Record is new. Records is bad.
+	err = c.AddRecord("Q", "") // AB -> AB.
+	aTest.MustBeAnError(err)
+	aTest.MustBeEqual(err.Error(), ErrDataIsEmpty)
+	ok = _test_ensure_order_2_records(c, [2]string{"A", "B"}, [2]string{"1", "2"})
+	aTest.MustBeEqual(ok, true)
+	// Also check new values of size, volume and record's TTL.
+	aTest.MustBeEqual(c.size, 2)
+	aTest.MustBeEqual(c.volume, 2)
 
 	// Preparation for Test #3.
 	c = _test_prepare_AB_cache(aTest) // AB.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
+	aTest.MustBeEqual(c.volume, 2)
 	c.volumeLimit = 3
 
 	// Test #3. Record is new. Record is too big.
@@ -275,14 +270,12 @@ func Test_AddRecord(t *testing.T) {
 	aTest.MustBeEqual(ok, true)
 	// Also check new values of size, volume and record's TTL.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
+	aTest.MustBeEqual(c.volume, 2)
 
 	// Preparation for Test #4.
 	c = _test_prepare_AB_cache(aTest) // AB.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
+	aTest.MustBeEqual(c.volume, 2)
 
 	// Test #4. Record is new. No limits.
 	err = c.AddRecord("Q", "test") // AB -> QAB.
@@ -291,13 +284,12 @@ func Test_AddRecord(t *testing.T) {
 	aTest.MustBeEqual(ok, true)
 	// Also check new values of size, volume and record's TTL.
 	aTest.MustBeEqual(c.size, 3)
-	aTest.MustBeEqual(c.volume, (4+4)+(4+1)+(4+1))
+	aTest.MustBeEqual(c.volume, 4+1+1)
 
 	// Preparation for Test #5.
 	c = _test_prepare_AB_cache(aTest) // AB.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
+	aTest.MustBeEqual(c.volume, 2)
 	c.sizeLimit = 2
 
 	// Test #5. Record is new. Size is limited.
@@ -307,15 +299,13 @@ func Test_AddRecord(t *testing.T) {
 	aTest.MustBeEqual(ok, true)
 	// Also check new values of size, volume and record's TTL.
 	aTest.MustBeEqual(c.size, 2)
-	aTest.MustBeEqual(c.volume, (4+4)+(4+1))
+	aTest.MustBeEqual(c.volume, 4+1)
 
 	// Preparation for Test #6.
 	c = _test_prepare_AB_cache(aTest) // AB.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
-	//c.volumeLimit = 4
-	c.volumeLimit = 12 // A=5, B=5, Q=7.
+	aTest.MustBeEqual(c.volume, 2)
+	c.volumeLimit = 4
 
 	// Test #6. Record is new. Volume is limited, 1 record is deleted.
 	err = c.AddRecord("Q", "xxx") // AB -> QAB -> QA.
@@ -324,16 +314,13 @@ func Test_AddRecord(t *testing.T) {
 	aTest.MustBeEqual(ok, true)
 	// Also check new values of size, volume and record's TTL.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 3+1)
-	aTest.MustBeEqual(c.volume, 7+5)
+	aTest.MustBeEqual(c.volume, 3+1)
 
 	// Preparation for Test #7.
 	c = _test_prepare_AB_cache(aTest) // AB.
 	aTest.MustBeEqual(c.size, 2)
-	//aTest.MustBeEqual(c.volume, 2)
-	aTest.MustBeEqual(c.volume, (4+1)+(4+1))
-	//c.volumeLimit = 3
-	c.volumeLimit = 5 + 5
+	aTest.MustBeEqual(c.volume, 2)
+	c.volumeLimit = 3
 
 	// Test #7. Record is new. Volume is limited, 2 records are deleted.
 	err = c.AddRecord("Q", "xxx") // AB -> QAB -> Q.
@@ -342,8 +329,7 @@ func Test_AddRecord(t *testing.T) {
 	aTest.MustBeEqual(ok, true)
 	// Also check new values of size, volume and record's TTL.
 	aTest.MustBeEqual(c.size, 1)
-	//aTest.MustBeEqual(c.volume, 3)
-	aTest.MustBeEqual(c.volume, 7)
+	aTest.MustBeEqual(c.volume, 3)
 }
 
 func Test_GetRecord(t *testing.T) {

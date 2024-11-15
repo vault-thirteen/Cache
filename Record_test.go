@@ -10,14 +10,7 @@ import (
 func Test_NewRecord(t *testing.T) {
 	aTest := tester.New(t)
 	var err error
-	var rS *Record[string, string]
-	var rBA *Record[string, []byte]
-
-	type MyClassA struct {
-		Name string
-		Age  int
-	}
-	var rMCA *Record[string, MyClassA]
+	var r *Record[string, string]
 
 	// Test #1. checkUid fails.
 	// TODO: Wait for Go language update for generics.
@@ -26,50 +19,38 @@ func Test_NewRecord(t *testing.T) {
 	//aTest.MustBeEqual(err.Error(), ErrUidIsEmpty)
 
 	// Test #2. checkData fails.
-	// TODO: Wait until Go language becomes a normal programming language.
-	// Golang can not get real size of an object or a variable.
-	//r, err = NewRecord[string, string](nil, "uid", "")
-	//aTest.MustBeAnError(err)
-	//aTest.MustBeEqual(err.Error(), ErrDataIsEmpty)
+	r, err = NewRecord[string, string](nil, "uid", "")
+	aTest.MustBeAnError(err)
+	aTest.MustBeEqual(err.Error(), ErrDataIsEmpty)
 
-	// Test #3. Data type is string.
-	rS, err = NewRecord[string, string](nil, "uid", "data777", true)
+	// Test #3. OK.
+	r, err = NewRecord[string, string](nil, "uid", "data")
 	aTest.MustBeNoError(err)
-	aTest.MustBeEqual(rS.uid, "uid")
-	aTest.MustBeEqual(rS.data, "data777")
-	aTest.MustBeEqual(rS.volume, 4+7) // This may be changed in next versions of Go language.
-	aTest.MustBeEqual(rS.cache, (*Cache[string, string])(nil))
-	aTest.MustBeEqual(rS.upperRecord, (*Record[string, string])(nil))
-	aTest.MustBeEqual(rS.lowerRecord, (*Record[string, string])(nil))
-
-	// Test #4. Data type is []byte.
-	rBA, err = NewRecord[string, []byte](nil, "uid", []byte{0x00, 0xFF, 0x00}, true)
-	aTest.MustBeNoError(err)
-	aTest.MustBeEqual(rBA.volume, 4+3) // See comments above.
-
-	// Test #5. Data type is MyClassA.
-	rMCA, err = NewRecord[string, MyClassA](nil, "uid", MyClassA{Name: "John", Age: 123}, true)
-	aTest.MustBeNoError(err)
-	aTest.MustBeEqual(rMCA.volume, 53) // See comments above.
+	aTest.MustBeEqual(r.uid, "uid")
+	aTest.MustBeEqual(r.data, "data")
+	aTest.MustBeEqual(r.volume, 4)
+	aTest.MustBeEqual(r.cache, (*Cache[string, string])(nil))
+	aTest.MustBeEqual(r.upperRecord, (*Record[string, string])(nil))
+	aTest.MustBeEqual(r.lowerRecord, (*Record[string, string])(nil))
 }
 
-//func Test_checkUid(t *testing.T) {
-//	// TODO: Wait for Go language update for generics.
-//}
+func Test_checkUid(t *testing.T) {
+	// TODO: Wait for Go language update for generics.
+}
 
-//func Test_checkData(t *testing.T) {
-//	aTest := tester.New(t)
-//	var err error
-//
-//	// Test #1. Bad data.
-//	err = checkData[string]("")
-//	aTest.MustBeAnError(err)
-//	aTest.MustBeEqual(err.Error(), ErrDataIsEmpty)
-//
-//	// Test #2. OK.
-//	err = checkData[string]("ok")
-//	aTest.MustBeNoError(err)
-//}
+func Test_checkData(t *testing.T) {
+	aTest := tester.New(t)
+	var err error
+
+	// Test #1. Bad data.
+	err = checkData[string]("")
+	aTest.MustBeAnError(err)
+	aTest.MustBeEqual(err.Error(), ErrDataIsEmpty)
+
+	// Test #2. OK.
+	err = checkData[string]("ok")
+	aTest.MustBeNoError(err)
+}
 
 func Test_moveToTop(t *testing.T) {
 	aTest := tester.New(t)
@@ -133,17 +114,15 @@ func Test_update(t *testing.T) {
 	aTest := tester.New(t)
 	var c *Cache[string, string]
 	var err error
-	c = NewCache[string, string](0, 1000, 60)
+	c = NewCache[string, string](0, 0, 60)
 	err = c.AddRecord("A", "1")
 	aTest.MustBeNoError(err)
-	//aTest.MustBeEqual(c.volume, 1)
-	aTest.MustBeEqual(c.volume, (4 + 1))
+	aTest.MustBeEqual(c.volume, 1)
 
 	// Test #1.
-	c.top.update("333", true)
+	c.top.update("333")
 	aTest.MustBeEqual(c.top.data, "333")
-	//aTest.MustBeEqual(c.volume, 3)
-	aTest.MustBeEqual(c.volume, (4 + 3))
+	aTest.MustBeEqual(c.volume, 3)
 }
 
 func Test_unlink(t *testing.T) {
