@@ -116,13 +116,24 @@ func (c *Cache[U, D]) GetVolume() (usedVolume int, volumeLimit int) {
 	return c.volume, c.volumeLimit
 }
 
-// RecordExists checks whether the specified record exists or not.
+// RecordExists checks whether the specified record exists or not. If the
+// record is outdated, it is removed from the cache.
 func (c *Cache[U, D]) RecordExists(uid U) (recordExists bool) {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
+	c.lock.Lock()
+	defer c.lock.Unlock()
 
-	_, recordExists = c.recordsByUid[uid]
-	return recordExists
+	var rec *Record[U, D]
+	rec, recordExists = c.recordsByUid[uid]
+	if !recordExists {
+		return false
+	}
+
+	if !rec.isAlive() {
+		rec.unlink()
+		return false
+	}
+
+	return true
 }
 
 // AddRecord either adds a new record to the top of the cache or moves an

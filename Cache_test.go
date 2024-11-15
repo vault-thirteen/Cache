@@ -199,7 +199,17 @@ func Test_RecordExists(t *testing.T) {
 	ok = _test_ensure_order_3_records(c, [3]string{"A", "B", "C"}, [3]string{"1", "2", "3"})
 	aTest.MustBeEqual(ok, true)
 
-	// Test #2. Record is found.
+	// Test #2. Record is outdated.
+	// Wait for the record to become outdated. N.B.: TTL is 3 Seconds.
+	time.Sleep(time.Second * (3 + 1))
+	recExists = c.RecordExists("B") // ABC -> AC.
+	aTest.MustBeEqual(recExists, false)
+	ok = _test_ensure_order_2_records(c, [2]string{"A", "C"}, [2]string{"1", "3"})
+	aTest.MustBeEqual(ok, true)
+
+	c = _test_prepare_ABC_cache_with_low_ttl(aTest) // ABC.
+
+	// Test #3. Record is found.
 	recExists = c.RecordExists("B")
 	aTest.MustBeEqual(recExists, true)
 	ok = _test_ensure_order_3_records(c, [3]string{"A", "B", "C"}, [3]string{"1", "2", "3"})
