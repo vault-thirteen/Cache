@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	cache "github.com/vault-thirteen/Cache"
+	"github.com/vault-thirteen/Cache/VL"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func mustBeNoError(err error) {
 // Test #1. Overheating with a single record.
 // Cache has 2 records; the same single record is added multiple times.
 func test_1() {
-	c := cache.NewCache[string, string](100, 100_000, 3600)
+	c := vl.NewCache[string, string](100, 100_000, 3600)
 	var err error
 
 	err = c.AddRecord("B", "2")
@@ -46,7 +46,7 @@ func test_1() {
 // Test #2. Overheating with two switching records.
 // Cache has 2 records; the same pair of records is added multiple times.
 func test_2() {
-	c := cache.NewCache[string, string](100, 100_000, 3600)
+	c := vl.NewCache[string, string](100, 100_000, 3600)
 	var err error
 
 	err = c.AddRecord("B", "2")
@@ -69,7 +69,7 @@ func test_2() {
 
 // Test #3. Heating with 100 records each having 1000 bytes of data.
 func test_3() {
-	c := cache.NewCache[string, string](100, 100_000, 3600)
+	c := vl.NewCache[string, string](100, 100_000, 3600)
 	var err error
 
 	tmp := make([]byte, 0, 1000)
@@ -105,7 +105,7 @@ func test_3() {
 
 // Test #4. Heating with 1000 records each having 1'000'000 bytes of data.
 func test_4() {
-	c := cache.NewCache[string, string](1000, 1_000_000_000, 3600)
+	c := vl.NewCache[string, string](1000, 1_000_000_000, 3600)
 	var err error
 
 	tmp := make([]byte, 0, 1_000_000)
