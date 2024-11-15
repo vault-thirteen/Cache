@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vault-thirteen/Cache/NLV"
+	"github.com/vault-thirteen/Cache/NVL"
 )
 
 func main() {
