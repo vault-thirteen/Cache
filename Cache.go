@@ -20,6 +20,15 @@ type Cache[U UidType, D DataType] struct {
 }
 
 // NewCache creates a new cache.
+// If volumeLimit is > 0, volume calculation is enabled.
+// Volume calculation consumes a lot of CPU time while Go language does not
+// provide a method for fast calculation of real memory usage of a variable.
+// The first attempt of Go language developers was to use reflection, but it
+// was terribly slow. The second attempt is the 'unsafe.Sizeof' method, but
+// this function does not show real size of a variable. Hand-made "hacks" work
+// very slowly and, thus, their usage is optional. Unfortunately, in the year
+// 2024 there is still no type switch in Go language for generic variables
+// which could make this problem a little bit less annoying.
 func NewCache[U UidType, D DataType](
 	sizeLimit int,
 	volumeLimit int,
@@ -34,20 +43,19 @@ func NewCache[U UidType, D DataType](
 	return cache
 }
 
-func (c *Cache[U, D]) initialize(
-	sizeLimit int,
-	volumeLimit int,
-	recordTtl uint,
-) {
+func (c *Cache[U, D]) initialize(sizeLimit int, volumeLimit int, recordTtl uint) {
 	c.top = nil
 	c.bottom = nil
 	c.size = 0
 	c.sizeLimit = sizeLimit
-	c.volume = 0
 	c.volumeLimit = volumeLimit
 	c.recordsByUid = make(map[U]*Record[U, D])
 	c.recordTtl = recordTtl
 	c.lock = new(sync.RWMutex)
+
+	if c.hasLimitedVolume() {
+		c.volume = 0
+	}
 }
 
 func (c *Cache[U, D]) hasLimitedSize() bool {
@@ -77,7 +85,11 @@ func (c *Cache[U, D]) linkNewTopRecord(rec *Record[U, D]) {
 	}
 
 	c.size++
-	c.volume += rec.volume
+
+	if c.hasLimitedVolume() {
+		c.volume += rec.getVolume()
+	}
+
 	c.recordsByUid[rec.uid] = rec
 }
 
@@ -98,7 +110,11 @@ func (c *Cache[U, D]) unlinkBottomRecord() (rec *Record[U, D], err error) {
 	rec.lowerRecord = nil
 
 	c.size--
-	c.volume -= rec.volume
+
+	if c.hasLimitedVolume() {
+		c.volume -= rec.getVolume()
+	}
+
 	delete(c.recordsByUid, rec.uid)
 
 	return rec, nil
@@ -150,16 +166,16 @@ func (c *Cache[U, D]) AddRecord(uid U, data D) (err error) {
 		// If the UID is already used,
 		// we update data of the record having this UID.
 		rec.moveToTop()
-		rec.update(data)
+		rec.update(data, true)
 	} else {
 		// UID is not found,
 		// we add a new record.
-		rec, err = NewRecord(c, uid, data)
+		rec, err = NewRecord(c, uid, data, c.hasLimitedVolume())
 		if err != nil {
 			return err
 		}
 
-		if c.hasLimitedVolume() && (rec.volume > c.volumeLimit) {
+		if c.hasLimitedVolume() && (rec.getVolume() > c.volumeLimit) {
 			return errors.New(ErrRecordIsTooBig)
 		}
 

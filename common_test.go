@@ -163,7 +163,7 @@ func _test_prepare_ABC_cache_with_low_ttl(aTest *tester.Test) (c *Cache[string, 
 
 func _test_prepare_AB_cache(aTest *tester.Test) (c *Cache[string, string]) {
 	var err error
-	c = NewCache[string, string](0, 0, 60)
+	c = NewCache[string, string](0, 1000, 60)
 	err = c.AddRecord("B", "2")
 	aTest.MustBeNoError(err)
 	err = c.AddRecord("A", "1")
@@ -186,7 +186,7 @@ func _test_prepare_0_cache() (c *Cache[string, string]) {
 
 func _test_prepare_record_Q(aTest *tester.Test, c *Cache[string, string]) (r *Record[string, string]) {
 	var err error
-	r, err = NewRecord(c, "Q", "W")
+	r, err = NewRecord(c, "Q", "W", true)
 	aTest.MustBeNoError(err)
 	return r
 }
