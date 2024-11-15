@@ -18,7 +18,8 @@ into following two variants:
 * A cache with volume calculation which supports only `string` and `[]byte` variable types;
 * A cache without volume calculation which supports `any` variable type.
 
-The first variant is the most practical as it allows to control memory usage. 
+The first variant is the most practical one as it allows to control memory 
+usage. 
 
 The second variant allows to use different variable types for cached records, 
 but it lacks the ability for controlling memory usage except for the indirect 
