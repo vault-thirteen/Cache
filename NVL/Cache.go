@@ -172,20 +172,38 @@ func (c *Cache[U, D]) GetRecord(uid U) (data D, err error) {
 	return rec.data, nil
 }
 
-// RemoveRecord removes a record from the cache.
-func (c *Cache[U, D]) RemoveRecord(uid U) (recExists bool, err error) {
+// RemoveRecord safely removes a record from the cache.
+func (c *Cache[U, D]) RemoveRecord(uid U) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
 	var rec *Record[U, D]
+	var recExists bool
 	rec, recExists = c.recordsByUid[uid]
 	if !recExists {
-		return recExists, fmt.Errorf(ErrRecordIsNotFound, uid)
+		return
 	}
 
 	rec.unlink()
 
-	return recExists, nil
+	return
+}
+
+// RemoveExistingRecord removes an existing record from the cache.
+func (c *Cache[U, D]) RemoveExistingRecord(uid U) (err error) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
+	var rec *Record[U, D]
+	var recExists bool
+	rec, recExists = c.recordsByUid[uid]
+	if !recExists {
+		return fmt.Errorf(ErrRecordIsNotFound, uid)
+	}
+
+	rec.unlink()
+
+	return nil
 }
 
 // Clear removes all records from the cache.
