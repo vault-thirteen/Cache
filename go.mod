@@ -2,7 +2,7 @@ module github.com/vault-thirteen/Cache
 
 go 1.25.9
 
-require github.com/vault-thirteen/auxie v0.32.0
+require github.com/vault-thirteen/auxie v0.36.3
 
 require (
 	github.com/kr/pretty v0.3.1 // indirect
